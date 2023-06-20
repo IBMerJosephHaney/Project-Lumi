@@ -1,0 +1,355 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:root{
+  --bgColor : hsla(242, 86%, 6%, 1);
+  --bgColorLight : hsla(242, 86%, 24%, 1);
+  --textColor : hsla(242, 86%, 88%, 1);
+  --textColorDark : hsla(242, 36%, 0%, 1);
+  --paperColor: hsla(242, 86%, 44%, 1);
+  --paperColorDark: hsla(242, 86%, 34%, 1);
+  --shadowColorFaint: hsla(0, 0%, 0%, 0.2);
+}
+
+::selected{
+  color: var(--textColorDark);
+}
+
+html, body{
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bgColor);
+  background: linear-gradient(135deg, var(--bgColor), var(--bgColorLight));
+  color: var(--textColor);
+  font-family: 'Saira', sans-serif;
+  position: relative;
+}
+
+*{
+  box-sizing: border-box;
+  transition: all 0.12s cubic-bezier(0.42, 0.54, 0.22, 1.26);
+}
+
+#canvas {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+audio {
+  position: fixed;
+  left: 10px;
+  bottom: -10px;
+  width: calc(100% - 20px);
+}
+
+audio.active{
+  bottom: 10px;
+}
+
+#thefile{
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: 1;
+}
+
+label.file{
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  padding: 1rem 2rem;
+  border-radius: 4px;
+  
+  background: var(--paperColor);
+  color: var(--textColor);
+  font-size: 1.25em;
+  font-weight: 700;
+  box-shadow: 0 20px 60px var(--shadowColorFaint);
+
+  cursor: pointer;
+}
+
+
+label.file:hover{
+    background: var(--paperColorDark);
+    transform: translate3d(-50%, -55%, 0);
+}
+
+label.file:active{
+    background: var(--paperColorDark);
+    transform: translate3d(-50%, -45%, 0);
+}
+
+label.file.normal{
+  transform: translate3d(10%, 50%, 0);
+  padding: 0.2rem 2rem;
+  font-size: 1rem;
+  top: 0;
+  left: 0;
+}
+
+main {
+  height: calc(100% - 100px);
+  padding-bottom: 0;
+}
+
+#messages-card {
+  height: 100%;
+  padding-bottom: 0;
+  margin-top: 0px;
+  width: 100%;
+}
+
+#messages-card-container {
+  height: calc(100% - 5px);
+  width: 100%;
+  padding: 0;
+}
+.mdl-layout__header-row span {
+  margin-left: 15px;
+  margin-top: 6px;
+}
+
+.mdl-layout__header-row a {
+  margin-left: 5px;
+  margin-top: -21px;
+  color: #fff;
+}
+
+.mdl-grid {
+  max-width: 100%;
+  margin: auto;
+}
+
+.material-icons {
+  font-size: 36px;
+  top: 8px;
+  position: relative;
+}
+
+.mdl-layout__header-row {
+  padding: 0;
+  margin: 0 auto;
+}
+
+.mdl-card__supporting-text {
+  width: auto;
+  height: 100%;
+  padding-top: 0;
+  font-family: "Roboto-Light";
+  font-size: 24pt;
+}
+
+#messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 26px;
+  height: calc(100% - 105px);
+  max-height: calc(100% - 105px);
+  display: block;
+}
+
+#message-form {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  float: left;
+}
+
+#message-form .mdl-textfield {
+  width: calc(100% - 110px);
+}
+
+#message-form .mdl-textfield .parent{
+	 pointer-events: none;
+}
+
+#message-form button,
+#image-form button {
+  margin: 1px 0 0 20px;
+  width: 35px;
+}
+
+.mdl-card {
+  min-height: 0;
+}
+
+.mdl-card {
+  background: linear-gradient(white, #f9f9f9);
+  justify-content: space-between;
+}
+
+#image-form #submitImage {
+  width: auto;
+  padding: 0 6px 0 1px;
+  min-width: 0;
+}
+
+#image-form #submitImage .material-icons {
+  top: -1px;
+}
+
+@media screen and (max-width: 610px) {
+  header {
+    height: 10px;
+    padding-bottom: 0px !important;
+    height: 0;
+    background-color: inherit;
+  }
+  #messages-card {
+    margin: 0;
+    width: 100%;
+  }
+  #messages-card-container {
+    height: calc(100% - 5px);
+    width: 100%;
+    padding: 0;
+  }
+}
+
+.mdl-textfield__label:after {
+  background-color: rgb(255, 152, 0);
+}
+
+.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
+  color: rgb(255, 152, 0);
+}
+
+.mdl-button .material-icons {
+  top: -1px;
+  margin-right: 5px;
+}
+
+.msg-card-wide.mdl-card {
+  width: 100%;
+  height: auto;
+  padding: 10px;
+}
+
+.msg-card-wide.mdl-card.user {
+  text-align: left;
+  margin-top: 47px;
+  /* border-bottom: 1px solid red; */
+}
+
+.user-line {
+  margin-bottom: 5px;
+  margin-top: -11.5px;
+  margin-left: 1%;
+  width: 4%;
+  height: 12px;
+  font-size: 10px;
+  border-top: 2px solid #b71a1a;
+}
+
+.msg-card-wide.mdl-card.bot {
+  text-align: right;
+  margin-top: 47px;
+  /* border-bottom: 1px solid blue; */
+}
+
+.bot-line {
+  margin-bottom: -5px;
+  margin-left: 95%;
+  margin-top: -10px;
+  width: 4%;
+  height: 12px;
+  font-size: 10px;
+  border-top: 2px solid #1caeb5 ;
+}
+
+.msg-card-wide.mdl-card .mdl-card__supporting-text {
+  font-size: 3vw;
+  line-height: 3.2vw;
+}
+.mdl-layout__header {min-height: 50px;}
+#message-card-header {
+  width: 100%;
+  height: 50px;
+  margin-left: 0%;
+}
+
+#menu_bar {
+  margin-left: 98%;
+  position: relative;
+  top: -30px;
+}
+
+#bot_icon {
+  margin-left: 1%;
+  margin-top: 5px;
+}
+
+#bot_title {
+  margin-top: 10%;
+}
+
+#bot_heading {
+  font-size: 30pt;
+  margin-left: 17px;
+}
+
+#belowtext {
+  background-color: #EDEDED;
+  height: 59px;
+  width: 103%;
+  margin-left: -17px;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+   font-size: 12pt;
+}
+::-moz-placeholder { /* Firefox 19+ */
+   font-size: 12pt;
+}
+:-ms-input-placeholder { /* IE 10+ */
+   font-size: 12pt;
+}
+:-moz-placeholder { /* Firefox 18- */
+   font-size: 12pt;
+}
+
+#submit{
+  background-color: transparent;
+    border: medium none;
+    height: 62px;
+}
+.textfield__input{
+  font-family: "Roboto-Regular","Arial",sans-serif;
+  font-size: 23pt;
+  margin-bottom: 5px;
+  height: 50px;
+}
+.microphone {
+  margin-bottom: 50px;
+  height: 60px;
+}
+.micHolder {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  margin: -300px 0 0 -300px;
+  text-align: center;
+  width: 600px;
+}
