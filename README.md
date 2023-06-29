@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Watson Assistant Animated Audio UI
 
 Combines Watson Assistant, STT, and TTS, with an animated UI for interacting with the assistant.
