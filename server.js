@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-require("dotenv").config({ path: path.resolve(__dirname, '..', '.env') });
+require('dotenv').config({ silent: true });
 const fs = require('fs');
 const express = require('express');
 const app = express();
@@ -11,29 +11,14 @@ const SocketServer = require('ws').Server;
 app.use(express.static(__dirname + '/static'));
 app.use(cors());
 
-// token endpoints
-// **Warning**: these endpoints should probably be guarded with additional authentication & authorization for production use
-
-// speech to text token endpoint
-
 const serviceUrl_stt = process.env.SPEECH_TO_TEXT_URL;
-const serviceUrl_tts = 'https://api.us-south.speech-to-text.watson.cloud.ibm.com';
+const serviceUrl_tts = process.env.TEXT_TO_SPEECH_URL;
 
 const sttTokenManager = new IamTokenManager({
-    apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY || 'ee3R9nflWBDAolFYewd7u-gdcD6fb4hVFy9t6XlcwFYN',
+    apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY 
   });
 
-// const params = {
-//   objectMode: true,
-//   contentType: 'audio/wav',
-//   model: 'en-US_BroadbandModel',
-//   keywords: ['colorado', 'tornado', 'tornadoes'],
-//   keywordsThreshold: 0.5,
-//   maxAlternatives: 3,
-// };
-
 app.get('/', (req, res) => res.render('index'));
-
 
 /*---------------------------SPEECH TO TEXT----------------------*/
 
@@ -51,44 +36,9 @@ app.get('/api/v1/credentials', async (req, res, next) => {
 //----------------------------------------TEXT-TO-SPEECH---------------------------------------------//
 
 const ttsTokenManager = new IamTokenManager({
-    apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY || '<iam_apikey>',
+    apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY 
   });
 
-
-const getFileExtension = (acceptQuery) => {
-  const accept = acceptQuery || '';
-  switch (accept) {
-    case 'audio/ogg;codecs=opus':
-    case 'audio/ogg;codecs=vorbis':
-      return 'ogg';
-    case 'audio/wav':
-      return 'wav';
-    case 'audio/mpeg':
-      return 'mpeg';
-    case 'audio/webm':
-      return 'webm';
-    case 'audio/flac':
-      return 'flac';
-    default:
-      return 'mp3';
-  }
-};
-
-/* app.get('/api/v3/synthesize', async (req, res, next) => {
-  try {
-    const { result } = await textToSpeech.synthesize(req.query);
-    const transcript = result;
-    transcript.on('response', (response) => {
-      if (req.query.download) {
-        response.headers['content-disposition'] = `attachment; filename=transcript.${getFileExtension(req.query.accept)}`;
-      }
-    });
-    transcript.on('error', next);
-    transcript.pipe(res);
-  } catch (error) {
-    res.send(error);
-  }
-}); */
 
 app.get('/api/v1/credentials_tts', async (req, res, next) => {
     try {
