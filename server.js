@@ -8,6 +8,7 @@ const cors = require('cors');
 const { IamTokenManager } = require('ibm-watson/auth');
 const SocketServer = require('ws').Server;
 
+
 app.use(express.static(__dirname + '/static'));
 app.use(cors());
 
