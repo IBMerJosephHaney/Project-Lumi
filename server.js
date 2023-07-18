@@ -1,14 +1,11 @@
 'use strict';
 const path = require('path');
-const { pipeline } = require('stream');
 require("dotenv").config({ path: path.resolve(__dirname, '..', '.env') });
 const fs = require('fs');
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const SpeechToTextV1 = require('ibm-watson/speech-to-text/v1.js');
-const TextToSpeechV1 = require('ibm-watson/text-to-speech/v1.js');
-const { IamAuthenticator } = require('ibm-watson/auth');
+const { IamTokenManager } = require('ibm-watson/auth');
 const vcapServices = require('vcap_services');
 
 // on bluemix, enable rate-limiting and force https
@@ -40,67 +37,43 @@ app.use(cors());
 
 // speech to text token endpoint
 
-const sttAuthService = new SpeechToTextV1({
-  authenticator: new IamAuthenticator({ 
-    apikey: 'ee3R9nflWBDAolFYewd7u-gdcD6fb4hVFy9t6XlcwFYN'
-   }),
-  url: 'https://api.us-south.speech-to-text.watson.cloud.ibm.com/instances/6c0f27d6-6018-4082-8ec6-0cb8bc1cc343'
-});
+const serviceUrl_stt = process.env.SPEECH_TO_TEXT_URL;
+const serviceUrl_tts = process.env.TEXT_TO_SPEECH_URL;
 
-// async function run (){
-//   await pipeline(
-//     fs.createReadStream('./resources/speech.wav'),
-//     sttAuthService.recognizeUsingWebSocket({ contentType: 'audio/l16; rate=44100' }),
-//     fs.createWriteStream('./transcription.txt'),
-//     (err) => {
-//       if (err) {
-//         console.error('Pipeline failed.', err);
-//       } else {
-//         console.log('Pipeline succeeded.');
-//       }
-//     }
-  
-//   )
+const sttTokenManager = new IamTokenManager({
+    apikey: process.env.SPEECH_TO_TEXT_IAM_APIKEY || '<iam_apikey>',
+  });
 
-// } 
+// const params = {
+//   objectMode: true,
+//   contentType: 'audio/wav',
+//   model: 'en-US_BroadbandModel',
+//   keywords: ['colorado', 'tornado', 'tornadoes'],
+//   keywordsThreshold: 0.5,
+//   maxAlternatives: 3,
+// };
 
-const params = {
-  objectMode: true,
-  contentType: 'audio/flac',
-  model: 'en-US_BroadbandModel',
-  keywords: ['colorado', 'tornado', 'tornadoes'],
-  keywordsThreshold: 0.5,
-  maxAlternatives: 3,
-};
+app.get('/', (req, res) => res.render('index'));
 
-app.get('/api/speech-to-text/token', function(req, res) {
-  const recognizeStream = sttAuthService.recognizeUsingWebSocket(params);  
-  fs.createReadStream('./resources/audio-file.flac').pipe(recognizeStream);
-  recognizeStream.on('data', function(event) { onEvent('Data:', event); });
-  recognizeStream.on('error', function(event) { onEvent('Error:', event); });
-  recognizeStream.on('close', function(event) { onEvent('Close:', event); });
 
-  function onEvent(name, event) {
-    console.log(name, JSON.stringify(event, null, 2));
-};
-  
-  // sttAuthService.recognize(params)
-  // .then(response => {
-  //   console.log(JSON.stringify(response.result, null, 2));
-  // })
-  // .catch(err => {
-  //   console.log(err);
-  // });
-});
+/*---------------------------SPEECH TO TEXT----------------------*/
 
+app.get('/api/v1/credentials', async (req, res, next) => {
+    try {
+      const accessToken = await sttTokenManager.getToken();
+      res.json({
+        accessToken,
+        serviceUrl_stt,
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
 //----------------------------------------TEXT-TO-SPEECH---------------------------------------------//
 
-const textToSpeech = new TextToSpeechV1({
-  authenticator: new IamAuthenticator({
-    apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY
-  }),
-  serviceurl: process.env.TEXT_TO_SPEECH_URL,
-});
+const ttsTokenManager = new IamTokenManager({
+    apikey: process.env.TEXT_TO_SPEECH_IAM_APIKEY || '<iam_apikey>',
+  });
 
 
 const getFileExtension = (acceptQuery) => {
@@ -122,7 +95,7 @@ const getFileExtension = (acceptQuery) => {
   }
 };
 
-app.get('/api/v3/synthesize', async (req, res, next) => {
+/* app.get('/api/v3/synthesize', async (req, res, next) => {
   try {
     const { result } = await textToSpeech.synthesize(req.query);
     const transcript = result;
@@ -136,7 +109,21 @@ app.get('/api/v3/synthesize', async (req, res, next) => {
   } catch (error) {
     res.send(error);
   }
-});
+}); */
+
+app.get('/api/v1/credentials_tts', async (req, res, next) => {
+    try {
+      const accessToken_tts = await sttTokenManager.getToken();
+      res.json({
+        accessToken_tts,
+        serviceUrl_tts,
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+
 //---------------------------------------------------------------------------------------------------//
 
 
